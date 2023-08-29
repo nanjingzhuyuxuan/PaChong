@@ -4,9 +4,8 @@
    该系统是从读书网（https://www.dushu.com/book/1188_1.html）获取书本信息，包括书本的名字和封面图片链接。 
 ## 1.1 功能模块设计 
    本文所设计的网络爬虫程序是基于 PyCharm 的编程平台建设，整个系统主要由如下四个模块组成：Scrapy爬虫模块、数据库MySql模块、CrawlSpider模块。系统结构图如图1 所示。
+![图 1 系统结构图](https://github.com/nanjingzhuyuxuan/PaChong/blob/main/picture/%E5%9B%BE%E7%89%871.png)
 
-
-图 1 系统结构图
 
 # 2 说明文档
 ## 2.1 scrapy架构组成 
@@ -92,11 +91,14 @@ def close_spider(self, spider):
 ```
 # 4 测试文档
    首先在使用管理员身份打开命令行，进入项目所在文件夹，输入scrapy crawl read 运行爬虫框架。  
+   ![图 2](https://github.com/nanjingzhuyuxuan/PaChong/blob/main/picture/%E5%9B%BE%E7%89%871.png)
 
    运行完后，在PyCharm中可以看到爬取下的数据的json文件。  
+   ![图 3](https://github.com/nanjingzhuyuxuan/PaChong/blob/main/picture/%E5%9B%BE%E7%89%871.png)
 
 
    通过运行pipelines将爬取下的数据导入到MySQL数据库中，共8872条数据。  
+   ![图 4](https://github.com/nanjingzhuyuxuan/PaChong/blob/main/picture/%E5%9B%BE%E7%89%871.png)
 
 # 5 主要代码节选
 ```python
