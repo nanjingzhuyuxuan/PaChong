@@ -91,14 +91,14 @@ def close_spider(self, spider):
 ```
 # 4 测试文档
    首先在使用管理员身份打开命令行，进入项目所在文件夹，输入scrapy crawl read 运行爬虫框架。  
-   ![图 2](https://github.com/nanjingzhuyuxuan/PaChong/blob/main/picture/%E5%9B%BE%E7%89%871.png)
+   ![图 2](https://github.com/nanjingzhuyuxuan/PaChong/blob/main/picture/%E5%9B%BE%E7%89%872.png)
 
    运行完后，在PyCharm中可以看到爬取下的数据的json文件。  
-   ![图 3](https://github.com/nanjingzhuyuxuan/PaChong/blob/main/picture/%E5%9B%BE%E7%89%871.png)
+   ![图 3](https://github.com/nanjingzhuyuxuan/PaChong/blob/main/picture/%E5%9B%BE%E7%89%873.png)
 
 
    通过运行pipelines将爬取下的数据导入到MySQL数据库中，共8872条数据。  
-   ![图 4](https://github.com/nanjingzhuyuxuan/PaChong/blob/main/picture/%E5%9B%BE%E7%89%871.png)
+   ![图 4](https://github.com/nanjingzhuyuxuan/PaChong/blob/main/picture/%E5%9B%BE%E7%89%874.png)
 
 # 5 主要代码节选
 ```python
