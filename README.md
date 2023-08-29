@@ -95,120 +95,68 @@ self.cursor.close()`
    通过运行pipelines将爬取下的数据导入到MySQL数据库中，共8872条数据。  
 
 # 5 主要代码节选
-`class ReadSpider(CrawlSpider):`  
+```python
+class ReadSpider(CrawlSpider)://python
+   name = 'read'
+   allowed_domains = ['www.dushu.com']
+   start_urls = ['https://www.dushu.com/book/1188_1.html']
 
-   `name = 'read'  `
-   
-   `allowed_domains = ['www.dushu.com'] ` 
-   
- `  start_urls = ['https://www.dushu.com/book/1188_1.html']  `
- 
+   rules = (
+       Rule(LinkExtractor(allow=r'/book/1188_\d+.html'),
+                          callback='parse_item',
+                          follow=True),
+   )
 
-  `rules = (  `
-  
-     `  Rule(LinkExtractor(allow=r'/book/1188_\d+.html'), ` 
-     
-                       `   callback='parse_item',  `
-                       
-                       `   follow=True),  `
-                       
-  ` )`
+   def parse_item(self, response):
+       img_list = response.xpath('//div[@class="bookslist"]//img')
+       for img in img_list:
+           name = img.xpath('./@data-original').extract_first()
+           src = img.xpath('./@alt').extract_first()
+           book = ScrapyReadbook101Item(name=name,src=src)
+           yield book
 
+class ScrapyReadbook101Pipeline:
+   def open_spider(self,spider):
+       self.fp = open('book.json','w',encoding='utf-8')
 
-   `def parse_item(self, response):  `
-   
-     `  img_list = response.xpath('//div[@class="bookslist"]//img')  `
-     
-    `   for img in img_list:  `
-    
-        `   name = img.xpath('./@data-original').extract_first()  `
-        
-        `   src = img.xpath('./@alt').extract_first()  `
-        
-       `    book = ScrapyReadbook101Item(name=name,src=src)  `
-       
-      `     yield book`  
-      
+   def process_item(self, item, spider):
+       self.fp.write(str(item))
+       return item
 
-`class ScrapyReadbook101Pipeline:  `
+   def close_spider(self,spider):
+       self.fp.close()
 
- `  def open_spider(self,spider):`  
- 
-     `  self.fp = open('book.json','w',encoding='utf-8')`  
-     
+# 加载settings文件
+   def open_spider(self,spider):
+       settings = get_project_settings()
+       self.host = settings['DB_HOST']
+       self.port =settings['DB_PORT']
+       self.user =settings['DB_USER']
+       self.password =settings['DB_PASSWROD']
+       self.name =settings['DB_NAME']
+       self.charset =settings['DB_CHARSET']
+       self.connect()
 
-  ` def process_item(self, item, spider):  `
-  
-      ` self.fp.write(str(item))  `
-      
-     `  return item  `
+   def connect(self):
+       self.conn = pymysql.connect(
+                           host=self.host,
+                           port=self.port,
+                           user=self.user,
+                           password=self.password,
+                           db=self.name,
+                           charset=self.charset
+       )
+       self.cursor = self.conn.cursor()
 
+   def process_item(self, item, spider):
+       sql = 'insert into book(name,src) values("{}","{}")'.format(item['name'],item['src'])
+       # 执行sql语句
+       self.cursor.execute(sql)
+       # 提交
+       self.conn.commit()
+       return item
 
-  ` def close_spider(self,spider):  `
-  
-      ` self.fp.close()`  
-      
-
-`# 加载settings文件 ` 
-
- `  def open_spider(self,spider):  `
- 
-      ` settings = get_project_settings()  `
-      
-     `  self.host = settings['DB_HOST']  `
-     
-     `  self.port =settings['DB_PORT']  `
-     
-    `   self.user =settings['DB_USER']  `
-    
-     `  self.password =settings['DB_PASSWROD']  `
-     
-   `    self.name =settings['DB_NAME']  `
-   
-   `    self.charset =settings['DB_CHARSET']  `
-   
-     `  self.connect()`  
-     
-
-  ` def connect(self):  `
-  
-      ` self.conn = pymysql.connect(  `
-      
-                          ` host=self.host,  `
-                          
-                          ` port=self.port, ` 
-                          
-                        `   user=self.user,  `
-                        
-                         `  password=self.password,  `
-                         
-                         `  db=self.name,  `
-                         
-                         `  charset=self.charset  `
-                         
-       `)  `
-       
-      ` self.cursor = self.conn.cursor()`
-      
-
-   `def process_item(self, item, spider):  `
-   
-      ` sql = 'insert into book(name,src) values("{}","{}")'.format(item['name'],item['src'])  `
-      
-     `  # 执行sql语句  `
-     
-    `   self.cursor.execute(sql)  `
-    
-   `    # 提交 ` 
-   
-      ` self.conn.commit()  `
-      
-    `   return item`  
-    
-
-   `def close_spider(self,spider):  `
-   
-      ` self.cursor.close()  `
-      
-     `  self.conn.close()` 
+   def close_spider(self,spider):
+       self.cursor.close()
+       self.conn.close()//python
      
