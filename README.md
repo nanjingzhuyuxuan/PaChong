@@ -43,19 +43,22 @@
 
 数据保存到本地MySQL数据库   
 （1）settings配置参数：   
-`DB_HOST = '192.168.231.128'   
+```python
+DB_HOST = '192.168.231.128'   
 DB_PORT = 3306   
 DB_USER = 'root'   
 DB_PASSWORD = '1234'   
 DB_NAME = 'test'   
-DB_CHARSET = 'utf8' `    
-（2）管道配置   
-`from scrapy.utils.project import get_project_settings   
+DB_CHARSET = 'utf8'//python
+```
+（2）管道配置
+```python
+from scrapy.utils.project import get_project_settings   
 import pymysql   
 class MysqlPipeline(object):   
 #__init__方法和open_spider的作用是一样的  
-#init是获取settings中的连接参数 `  
-`def __init__(self):   
+#init是获取settings中的连接参数   
+def __init__(self):   
 settings = get_project_settings()   
 self.host = settings['DB_HOST']   
 self.port = settings['DB_PORT']   
@@ -63,8 +66,8 @@ self.user = settings['DB_USER']
 self.pwd = settings['DB_PWD']   
 self.name = settings['DB_NAME']   
 self.charset = settings['DB_CHARSET']   
-self.connect() `  
-`# 连接数据库并且获取cursor对象   
+self.connect() 
+# 连接数据库并且获取cursor对象   
 def connect(self):   
 self.conn = pymysql.connect(host=self.host,   
 port=self.port,   
@@ -78,14 +81,15 @@ sql = 'insert into book(image_url, book_name, author, info) values("%s",
 "%s", "%s", "%s")' % (item['image_url'], item['book_name'], item['author'], item['info'])   
 sql = 'insert into book(image_url,book_name,author,info) values   
 ("{}","{}","{}","{}")'.format(item['image_url'], item['book_name'], item['author'],   
-item['info']) `  
-`# 执行sql语句   
+item['info'])   
+# 执行sql语句   
 self.cursor.execute(sql)   
 self.conn.commit()   
 return item   
 def close_spider(self, spider):   
 self.conn.close()   
-self.cursor.close()`  
+self.cursor.close()//python
+```  
 # 4 测试文档
    首先在使用管理员身份打开命令行，进入项目所在文件夹，输入scrapy crawl read 运行爬虫框架。  
 
